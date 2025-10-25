@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6;
+}
+
+/* 確保聊天記錄容器能夠覆蓋整個視窗，並限制高度 */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 12rem); /* 預估頂部狀態和底部輸入的高度 */
+}
+/* 響應式優化 */
+@media (max-width: 640px) {
+  .chat-messages {
+    max-height: calc(100vh - 15rem); /* 移動設備上的調整 */
+  }
+}

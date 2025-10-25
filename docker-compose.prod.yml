@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod # 使用生產模式 Dockerfile
+    container_name: chat-frontend-prod
+    ports:
+      # Nginx 運行在 80 端口，映射到本地 8080 (避免權限問題)
+      - "8080:80" 
+    environment:
+      # Nginx 會處理 /ws 代理，這裡不需要注入 VITE_WS_URL
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    restart: always
+
+  backend:
+    build: ./backend
+    container_name: chat-backend-prod
+    ports:
+      # 後端在外部不暴露端口，僅供 Nginx 代理使用
+      - "3000"
+    volumes:
+      # ⚠️ 生產模式：移除 volume 掛載，使用 COPY 在 build 階段注入代碼，提高安全性
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+    restart: always

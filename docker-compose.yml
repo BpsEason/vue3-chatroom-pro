@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      target: development # 使用開發模式 Dockerfile
+    container_name: chat-frontend-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      # ⚠️ 注入 VITE_WS_URL，使其能正確連線到 Docker 網絡中的 backend 服務
+      - VITE_WS_URL=ws://backend:3000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: chat-backend-dev
+    ports:
+      # 後端端口暴露在本地，方便本地 E2E 測試
+      - "3000:3000"
+    volumes:
+      # 啟用熱重載
+      - ./backend:/app
+      - /app/node_modules
+    restart: unless-stopped
